@@ -1,0 +1,89 @@
+// ==============================================================================
+// MCA FINAL YEAR CAPSTONE PROJECT - 7 DAX MEASURES
+// ==============================================================================
+// HOW TO CREATE EACH MEASURE IN POWER BI:
+//   1. Click on your table name in the Data pane (right side)
+//   2. Go to top ribbon: Modeling tab > New Measure
+//   3. Paste the formula into the formula bar at the top
+//   4. Press Enter
+//   5. Set the format using the Measure Tools ribbon
+//
+// TABLE NAME: Replace 'AI_Resume_Screening_Preprocessed' with your table name
+// ==============================================================================
+
+
+// ---- MEASURE 1: Total Applicants ----
+// What it does: Counts every single row in the table
+// Expected result: 1,000
+// Format: Whole Number (comma separator)
+
+Total Applicants = 
+COUNTROWS('AI_Resume_Screening_Preprocessed')
+
+
+// ---- MEASURE 2: Total Hired ----
+// What it does: Counts only rows where Recruiter Decision = "Hire"
+// Key concept: CALCULATE changes the filter so only "Hire" rows are counted
+// Expected result: 812
+// Format: Whole Number
+
+Total Hired = 
+CALCULATE(
+    COUNTROWS('AI_Resume_Screening_Preprocessed'), 
+    'AI_Resume_Screening_Preprocessed'[Recruiter Decision] = "Hire"
+)
+
+
+// ---- MEASURE 3: Total Rejected ----
+// What it does: Counts only rows where Recruiter Decision = "Reject"
+// Expected result: 188
+// Format: Whole Number
+
+Total Rejected = 
+CALCULATE(
+    COUNTROWS('AI_Resume_Screening_Preprocessed'), 
+    'AI_Resume_Screening_Preprocessed'[Recruiter Decision] = "Reject"
+)
+
+
+// ---- MEASURE 4: Hiring Rate % ----
+// What it does: Calculates (Total Hired / Total Applicants)
+// Key concept: DIVIDE safely handles division-by-zero (returns 0 instead of error)
+// Expected result: 81.2%
+// Format: Click the % button in Measure Tools ribbon, set 1 decimal place
+
+Hiring Rate % = 
+DIVIDE([Total Hired], [Total Applicants], 0)
+
+
+// ---- MEASURE 5: Average Experience of Hired Candidates ----
+// What it does: Average years of experience for hired candidates only
+// Expected result: 5.76 Years
+// Format: Decimal Number (1 decimal place)
+
+Avg Exp Hired = 
+CALCULATE(
+    AVERAGE('AI_Resume_Screening_Preprocessed'[Experience (Years)]), 
+    'AI_Resume_Screening_Preprocessed'[Recruiter Decision] = "Hire"
+)
+
+
+// ---- MEASURE 6: Average Projects of Hired Candidates ----
+// What it does: Average number of projects for hired candidates only
+// Expected result: 5.65 Projects
+// Format: Decimal Number (1 decimal place)
+
+Avg Projects Hired = 
+CALCULATE(
+    AVERAGE('AI_Resume_Screening_Preprocessed'[Projects Count]), 
+    'AI_Resume_Screening_Preprocessed'[Recruiter Decision] = "Hire"
+)
+
+
+// ---- MEASURE 7: Average Salary Expectation ----
+// What it does: Average salary expectation across ALL candidates
+// Expected result: $79,995
+// Format: Currency ($), 0 decimal places
+
+Avg Salary = 
+AVERAGE('AI_Resume_Screening_Preprocessed'[Salary Expectation ($)])
